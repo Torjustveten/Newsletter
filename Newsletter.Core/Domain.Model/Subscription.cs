@@ -8,5 +8,6 @@ namespace Newsletter.Core.Domain.Model
     {
         public string Name { get; set; }
         public string Email { get; set; }
+        public string VerificationCode { get; set; }
     }
 }

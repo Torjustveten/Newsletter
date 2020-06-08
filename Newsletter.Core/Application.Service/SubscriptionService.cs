@@ -9,7 +9,7 @@ namespace Newsletter.Core.Application.Service
 {
     public class SubscriptionService
     {
-        private IEmailService _emailService;
+        private readonly IEmailService _emailService;
         public SubscriptionService(IEmailService emailService)
         {
             _emailService = emailService;
@@ -19,16 +19,17 @@ namespace Newsletter.Core.Application.Service
         public async Task Subscribe(Subscription subscription)
         {
             var vertificationCode = new Guid().ToString();
-            var text = $"<a href="http://localhost:50518/subscription?email={subscription.Email}&code={vertificationCode}\\"> Click here to confirm subscription</a>";
+            var url = $"http://localhost:50518/subscription?email={subscription.Email}&code={subscription.VerificationCode}";
+            var text = $"<a href=\"{url}\">Click here to confirm!</a>";
             var email = new Email(
                 subscription.Email,
-                "Fjong@mail.com",
+                "FjongOgFin@mail.com",
                 "Confirmation of subscription to newsletter",
                 text);
-            _emailService.Send(email);
+            await _emailService.Send(email);
         }
 
-        public async Task Verify(Verification verification)
+        public async Task Verify(Subscription verificationCode)
         {
             
         }
