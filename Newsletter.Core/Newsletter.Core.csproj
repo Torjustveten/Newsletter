@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Domain.Service\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="NSwag.Core" Version="13.6.0" />
   </ItemGroup>
 
