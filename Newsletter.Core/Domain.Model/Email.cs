@@ -7,12 +7,15 @@ namespace Newsletter.Core.Domain.Model
     public class Email
     {
 
-        private string To { get; set; }
-        private string From { get; set; }
-        private string Subject { get; set; }
-        private string Text { get; set; }
-        public Email(string subscription, string email, string confirmation, string text)
+        public string To { get; set; }
+        public string From { get; set; }
+        public string Subject { get; set; }
+        public string Text { get; set; }
+        public Email(string to, string @from, string subject, string text)
         {
+            To = to;
+            From = @from;
+            Subject = subject;
             Text = text;
         }
     }
