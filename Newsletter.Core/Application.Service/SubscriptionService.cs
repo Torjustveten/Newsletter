@@ -10,28 +10,37 @@ namespace Newsletter.Core.Application.Service
     public class SubscriptionService
     {
         private readonly IEmailService _emailService;
-        public SubscriptionService(IEmailService emailService)
+        private readonly ISubscriptionRepository _subscriptionRepository;
+        public SubscriptionService(
+            IEmailService emailService,
+            ISubscriptionRepository subscriptionRepository)
         {
+            _subscriptionRepository = subscriptionRepository;
             _emailService = emailService;
         }
 
-        
-        public async Task Subscribe(Subscription subscription)
+        public async Task<bool> Subscribe(Subscription request)
         {
-            var vertificationCode = new Guid().ToString();
-            var url = $"http://localhost:50518/subscription?email={subscription.Email}&code={subscription.VerificationCode}";
-            var text = $"<a href=\"{url}\">Click here to confirm!</a>";
-            var email = new Email(
-                subscription.Email,
-                "FjongOgFin@mail.com",
-                "Confirmation of subscription to newsletter",
-                text);
-            await _emailService.Send(email);
+            var subscription = new Subscription(request.Name, request.Email);
+            var isCreated = await _subscriptionRepository.Create(subscription);
+            if (!isCreated) return false;
+            var email = new ConfirmSubscriptionEmail(
+                request.Email, "Fjong@mail.com", subscription.VerificationCode);
+            var isSent = await _emailService.Send(email);
+            return isSent;
         }
 
-        public async Task Verify(Subscription verificationCode)
+        public async Task<bool> Verify(Subscription verificationRequest)
         {
-            //await
+            var subscription = await _subscriptionRepository.ReadByEmail(verificationRequest.Email);
+            if (subscription == null || verificationRequest.VerificationCode != subscription.VerificationCode)
+            {
+                return false;
+            }
+
+            subscription.IsVerified = true;
+            var hasUpdated = await _subscriptionRepository.Update(subscription);
+            return hasUpdated;
         }
     }
 
