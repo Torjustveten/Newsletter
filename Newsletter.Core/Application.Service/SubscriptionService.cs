@@ -31,7 +31,7 @@ namespace Newsletter.Core.Application.Service
 
         public async Task Verify(Subscription verificationCode)
         {
-            
+            //await
         }
     }
 
